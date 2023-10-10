@@ -11,12 +11,14 @@ declare(strict_types=1);
 
 namespace SpojeNet\Realpad;
 
+use PhpOffice\PhpSpreadsheet\IOFactory;
+
 /**
  * Connect to TakeOut
  *
  * @author vitex
  */
-class ApiClient extends \Ease\Molecule
+class ApiClient extends \Ease\Sand
 {
     /**
      * RealPad URI
@@ -24,11 +26,59 @@ class ApiClient extends \Ease\Molecule
      */
     public $baseEndpoint = 'https://cms.realpad.eu/';
 
-    private $debug;
-
+    /**
+     * CURL resource handle
+     * @var resource|\CurlHandle|null
+     */
     private $curl;
 
-    private $timeout;
+    /**
+     * CURL response timeout
+     * @var int
+     */
+    private $timeout = 0;
+
+    /**
+     * Last CURL response info
+     * @var array
+     */
+    private $curlInfo = [];
+
+    /**
+     * Last CURL response error
+     * @var string
+     */
+    private $lastCurlError;
+
+    /**
+     * Throw Exception on error ?
+     * @var boolean
+     */
+    public $throwException = true;
+
+    /**
+     * Realpad Username
+     * @var string
+     */
+    private $apiUsername;
+
+    /**
+     * Realpad User password
+     * @var string
+     */
+    private $apiPassword;
+
+    /**
+     * May be huge response
+     * @var string
+     */
+    private $lastCurlResponse;
+
+    /**
+     * HTTP Response code of latst request
+     * @var int
+     */
+    private $lastResponseCode;
 
     /**
      * RealPad Data obtainer
@@ -37,80 +87,60 @@ class ApiClient extends \Ease\Molecule
     {
         $this->apiUsername = \Ease\Shared::cfg('REALPAD_USERNAME');
         $this->apiPassword = \Ease\Shared::cfg('REALPAD_PASSWORD');
+        $this->curlInit();
     }
 
     /**
-     * Inicializace CURL
+     * Initialize CURL
      *
-     * @return boolean Online Status
+     * @return mixed|boolean Online Status
      */
     public function curlInit()
     {
-        if ($this->offline === false) {
-            $this->curl = \curl_init(); // create curl resource
-            \curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true); // return content as a string from curl_exec
-            \curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, true); // follow redirects
-            \curl_setopt($this->curl, CURLOPT_HTTPAUTH, true);       // HTTP authentication
-            \curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, true);
-            \curl_setopt($this->curl, CURLOPT_SSL_VERIFYHOST, false);
-            \curl_setopt($this->curl, CURLOPT_VERBOSE, ($this->debug === true)); // For debugging
-            if (empty($this->authSessionId)) {
-                \curl_setopt(
-                    $this->curl,
-                    CURLOPT_USERPWD,
-                    $this->user . ':' . $this->password
-                ); // set username and password
-            }
-            if (!is_null($this->timeout)) {
-                \curl_setopt($this->curl, CURLOPT_HTTPHEADER, [
-                    'Connection: Keep-Alive',
-                    'Keep-Alive: ' . $this->timeout
-                ]);
-                \curl_setopt($this->curl, CURLOPT_TIMEOUT, $this->timeout);
-            }
-
-            \curl_setopt($this->curl, CURLOPT_USERAGENT, 'RealpadTakeout v' . \Ease\Shared::appVer() . ' https://github.com/Spoje-NET/Realpad-Takeout');
+        $this->curl = \curl_init(); // create curl resource
+        \curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true); // return content as a string from curl_exec
+        \curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, true); // follow redirects
+        \curl_setopt($this->curl, CURLOPT_HTTPAUTH, true); // HTTP authentication
+        \curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, true);
+        \curl_setopt($this->curl, CURLOPT_SSL_VERIFYHOST, false);
+        \curl_setopt($this->curl, CURLOPT_VERBOSE, ($this->debug === true)); // For debugging
+        if ($this->timeout) {
+            \curl_setopt($this->curl, CURLOPT_HTTPHEADER, [
+                'Connection: Keep-Alive',
+                'Keep-Alive: ' . $this->timeout
+            ]);
+            \curl_setopt($this->curl, CURLOPT_TIMEOUT, $this->timeout);
         }
-        return !$this->offline;
+        \curl_setopt(
+            $this->curl,
+            CURLOPT_USERAGENT,
+            'RealpadTakeout v' . \Ease\Shared::appVersion() . ' https://github.com/Spoje-NET/Realpad-Takeout'
+        );
+        \curl_setopt(
+            $this->curl,
+            CURLOPT_POSTFIELDS,
+            'login=' . $this->apiUsername . '&password=' . $this->apiPassword
+        );
+        return $this->curl;
     }
 
     /**
-     * Vykonej HTTP požadavek
+     * Execute HTTP request
      *
-     * @param string $url    URL požadavku
+     * @param string $url    URL of request
      * @param string $method HTTP Method GET|POST|PUT|OPTIONS|DELETE
-     * @param string $format požadovaný formát komunikace
      *
      * @return int HTTP Response CODE
      */
-    public function doCurlRequest($url, $method, $format = null)
+    public function doCurlRequest($url, $method = 'GET')
     {
-        if (is_null($format)) {
-            $format = $this->format;
-        }
         curl_setopt($this->curl, CURLOPT_URL, $url);
-// Nastavení samotné operace
-        curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, strtoupper($method));
-//Vždy nastavíme byť i prázná postdata jako ochranu před chybou 411
-        curl_setopt($this->curl, CURLOPT_POSTFIELDS, $this->postFields);
-        $httpHeaders = $this->defaultHttpHeaders;
-        $formats = Formats::bySuffix();
-        if (!isset($httpHeaders['Accept'])) {
-            $httpHeaders['Accept'] = $formats[$format]['content-type'];
-        }
-        if (!isset($httpHeaders['Content-Type'])) {
-            $httpHeaders['Content-Type'] = $formats[$format]['content-type'];
-        }
 
-        array_walk($httpHeaders, function (&$value, $header) {
-            $value = $header . ': ' . $value;
-        });
-        curl_setopt($this->curl, CURLOPT_HTTPHEADER, $httpHeaders);
-// Proveď samotnou operaci
+        curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, strtoupper($method));
+
         $this->lastCurlResponse = curl_exec($this->curl);
         $this->curlInfo = curl_getinfo($this->curl);
         $this->curlInfo['when'] = microtime();
-        $this->responseFormat = $this->contentTypeToResponseFormat(strval($this->curlInfo['content_type']), $url);
         $this->lastResponseCode = $this->curlInfo['http_code'];
         $this->lastCurlError = curl_error($this->curl);
         if (strlen($this->lastCurlError)) {
@@ -120,11 +150,37 @@ class ApiClient extends \Ease\Molecule
                 throw new Exception($msg, $this);
             }
         }
-
-        if ($this->debug === true) {
-            $this->saveDebugFiles();
-        }
         return $this->lastResponseCode;
+    }
+
+    /**
+     * Curl Error getter
+     *
+     * @return string
+     */
+    public function getErrors()
+    {
+        return $this->lastCurlError;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public function getLastResponseCode()
+    {
+        return $this->lastResponseCode;
+    }
+
+    /**
+     * Convert XML to array
+     */
+    public static function xml2array($xmlObject, $out = [])
+    {
+        foreach ((array) $xmlObject as $index => $node) {
+            $out[$index] = (is_object($node) || is_array($node)) ? self::xml2array($node) : $node;
+        }
+        return $out;
     }
 
     /**
@@ -140,9 +196,49 @@ class ApiClient extends \Ease\Molecule
 
     /**
      *
+     * @return array
+     */
+    public function listResources()
+    {
+        $responseData = [];
+        $responseCode = $this->doCurlRequest($this->baseEndpoint . 'ws/v10/list-resources', 'POST');
+        if ($responseCode == 200) {
+            $responseRaw = self::xml2array(new \SimpleXMLElement($this->lastCurlResponse));
+            foreach ($responseRaw['resource'] as $position => $attributes) {
+                $responseData[$attributes['@attributes']['uid']] = array_values($attributes)[0];
+                $responseData[$attributes['@attributes']['uid']]['position'] = $position;
+            }
+        }
+        return $responseData;
+    }
+
+    /**
+     *
      */
     public function __destruct()
     {
         $this->disconnect();
+    }
+
+    /**
+     *
+     * @return array
+     */
+    public function listCustomers()
+    {
+        $responseCode = $this->doCurlRequest($this->baseEndpoint . 'ws/v10/list-excel-customers', 'POST');
+        $customersData = [];
+        if ($responseCode == 200) {
+            $xls = sys_get_temp_dir() . '/' . \Ease\Functions::randomString() . '.xls';
+            file_put_contents($xls, $this->lastCurlResponse);
+            $spreadsheet = IOFactory::load($xls);
+            unlink($xls);
+            $customersDataRaw = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
+            unset($customersDataRaw[1]);
+            foreach ($customersDataRaw as $recordId => $recordData) {
+                $customersData[$recordId] = array_combine($customersDataRaw[1], $recordData);
+            }
+        }
+        return $customersData;
     }
 }

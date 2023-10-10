@@ -1,7 +1,6 @@
 # Realpad Takeout API Client for PHP
 
-//for real estate developer IT / reporting departments, integrators, and
-other 3rd parties//
+*for real estate developer IT / reporting departments, integrators, and other 3rd parties*
 
 This document describes how to use the Realpad Takeout API to back up the data stored in the
 system. Both structured data (such as lists of customers, deals, etc) and files uploaded to the
@@ -44,10 +43,14 @@ crc="3826804066"/>
 
 ● uid is the unique identifier of this resource, by which it can be retrieved using
 get-projects.
+
 ● content-type is the MIME type of the file, resolved when uploaded to the system (it’s
 the best guess).
+
 ● file-name is the original file name when it was uploaded to the system.
+
 ● size is the file size in bytes.
+
 ● crc is the CRC32 checksum of the file.
 
 This endpoint will always return all the resources. It’s up to your system to determine which
@@ -62,7 +65,7 @@ curl \
 https://cms.realpad.eu/resource/bd5563ae-abc...
 ```
 
-## Endpoints with a binary payload
+## Endpoints
 
 All of these endpoints return a single Excel file with a .xls extension, containing all the relevant
 data stored in our system. These endpoints behave just like get-resource, in that the HTTP
@@ -136,11 +139,14 @@ Accepts several additional optional parameters:
 ● `filter_status`` - if left empty, invoices in all statuses are sent. 1 - new invoices. 2 -
 invoices in Review #1. 3 - invoices in Review #2. 4 - invoices in approval. 5 - fully
 approved invoices. 6 - fully rejected invoices.
+
 ●`filter_groupcompany` - if left empty, invoices from all the group companies are sent. If
 Realpad database IDs of group companies are provided (as a comma-separated list),
 then only invoices from these companies are sent.
+
 ● `filter_issued_from`` - specify a date in the 2019-12-31 format to only send invoices
 issues after that date.
+
 ● `filter_issued_to` - specify a date in the 2019-12-31 format to only send invoices issues
 before that date.
 The initial set of columns describes the Invoice itself, and the last set of columns contains the
@@ -150,32 +156,59 @@ data of its Lines.
 
 Unit status enumeration
 ● 0 - free.
+
 ● 1 - pre-reserved.
+
 ● 2 - reserved.
+
 ● 3 - sold.
+
 ● 4 - not for sale.
+
 ● 5 - delayed.
 
 Unit type enumeration
+
 ● 1 - flat.
+
 ● 2 - parking.
+
 ● 3 - cellar.
+
 ● 4 - outdoor parking.
+
 ● 5 - garage.
+
 ● 6 - commercial space.
+
 ● 7 - family house.
+
 ● 8 - land.
+
 ● 9 - atelier.
+
 ● 10 - office.
+
 ● 11 - art workshop.
+
 ● 12 - non-residential unit.
+
 ● 13 - motorbike parking.
+
 ● 14 - creative workshop.
+
 ● 15 - townhouse.
+
 ● 16 - utility room.
+
 ● 17 - condominium.
+
 ● 18 - storage.
+
 ● 19 - apartment.
+
 ● 20 - accommodation unit.
+
 ● 21 - bike stand.
+
 ● 22 - communal area.
