@@ -1,0 +1,24 @@
+{
+    "name": "spojenet/realpad-takeout",
+    "description": "Realpad Takeout API Client",
+    "type": "library",
+    "require": {
+        "vitexsoftware/ease-core": "dev-main"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "10.5.x-dev"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "SpojeNet\\Realpad\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "CyberVitexus",
+            "email": "info@vitexsoftware.cz"
+        }
+    ],
+    "minimum-stability": "dev"
+}

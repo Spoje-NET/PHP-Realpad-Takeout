@@ -1,2 +1,181 @@
-# Realpad-Takeout
-Realpad Takeout API Client to back up the data stored in the system. 
+# Realpad Takeout API Client for PHP
+
+//for real estate developer IT / reporting departments, integrators, and
+other 3rd parties//
+
+This document describes how to use the Realpad Takeout API to back up the data stored in the
+system. Both structured data (such as lists of customers, deals, etc) and files uploaded to the
+CRM (unit plans, contract scans, ...) can be automatically retrieved this way. You are
+encouraged to implement an automatic backup system that will download the data from our
+server at any frequency you prefer, and use the data as a source for a reporting solution, or any
+other purpose.
+
+## Request
+
+First of all please contact <support@realpadsoftware.com> to obtain the credentials to use the
+Takeout API endpoints. You will perform POST requests over HTTPS and then store the
+resulting data. Most of the Takeout endpoints have just 2 parameters, both required: `login`` and
+`password`.
+
+Example call in cURL:
+
+```shell
+curl \
+--data "login=...&password=..." \
+--output customers.xls \
+https://cms.realpad.eu/ws/v10/list-excel-customers
+```
+
+### Response
+
+#### Endpoints with XML payload
+
+**list-resources**
+The root element is `<resources>`, sub-elements look like this:
+
+```xml
+<resource
+uid="bb938c51-891a-48d7-ba86-bea210a55c79"
+content-type="image/jpeg"
+file-name="some file.jpg"
+size="224292"
+crc="3826804066"/>
+```
+
+● uid is the unique identifier of this resource, by which it can be retrieved using
+get-projects.
+● content-type is the MIME type of the file, resolved when uploaded to the system (it’s
+the best guess).
+● file-name is the original file name when it was uploaded to the system.
+● size is the file size in bytes.
+● crc is the CRC32 checksum of the file.
+
+This endpoint will always return all the resources. It’s up to your system to determine which
+ones you haven’t downloaded yet. You may rely on UID as the unique identifier to distinguish
+between the files. You can fetch resources using HTTP GET by retrieving a URL in the following
+form: `<https://cms.realpad.eu/resource/><UID>`
+Example call in cURL:
+
+```shell
+curl \
+--output cached_resource \
+https://cms.realpad.eu/resource/bd5563ae-abc...
+```
+
+## Endpoints with a binary payload
+
+All of these endpoints return a single Excel file with a .xls extension, containing all the relevant
+data stored in our system. These endpoints behave just like get-resource, in that the HTTP
+headers contain a reasonable file name (e.g. when running from a web browser).
+If an extra parameter xlsx is sent with a non-empty value, Takeout API will instead provide the
+data in the Excel newer .xlsx format.
+
+**list-excel-customers**
+The last column contains the unique customer ID from the Realpad database.
+
+**list-excel-products**
+The last columns contain the unique unit ID, numeric ID of the unit type, numeric ID of the unit
+availability, unique project ID and deal ID from the Realpad database. See the appendix for the
+unit type and availability enums.
+
+**list-excel-business-cases**
+The last column contains the unique Deal ID from the Realpad database.
+
+**list-excel-projects**
+The last column contains the unique project ID from the Realpad database.
+
+**list-excel-deal-documents**
+The last three columns contain the unique document ID, customer ID, and sales agent ID from
+the Realpad database. The first column is the relevant deal ID.
+
+**list-excel-payments-prescribed**
+The last column contains the unique payment ID from the Realpad database. The second
+column is the relevant deal ID.
+
+**list-excel-payments-incoming**
+The first column contains the unique incoming payment ID from the Realpad database. The
+second column is the relevant Deal ID.
+
+**list-excel-additional-products**
+The last columns contain the additional product ID, its type ID, and the ID of the associated
+prescribed payment from the Realpad database. The first column is the relevant deal ID.
+
+**list-excel-inspections**
+Among the columns, there are those representing the deal ID and inspection ID from the
+Realpad database.
+
+**list-excel-defects**
+Accepts an additional optional parameter mode. By default all the Deal Warranty Claim Defects
+are returned. Certain developers will also see the Communal Areas Defects here by default. If
+mode is specified, other Defects can be returned. Available modes are: DEAL_DEFECTS,
+DEAL_DEFECTS_COMMUNAL_AREA, DEAL_DEFECTS_COMBINED, INSPECTION_DEFECTS,
+INSPECTION_DEFECTS_COMMUNAL_AREA, INSPECTION_DEFECTS_COMBINED.
+The last column contains the unique defect ID from the Realpad database. The second column
+is the relevant deal ID.
+
+**list-excel-tasks**
+The last columns contain the task ID, customer ID, and sales agent ID from the Realpad
+database.
+
+**list-excel-events**
+The last columns contain the event ID, customer ID, unit, and project ID from the Realpad
+database.
+
+**list-excel-sales-status**
+The last column contains the unit ID from the Realpad database.
+
+**list-excel-unit-history**
+Accepts an additional required parameter unitid, which has to be a valid unit Realpad database
+ID obtained from some other endpoint.
+The first column contains the timestamp of when the given unit started containing the data on
+the given row. The second column contains the name of the user who caused that data to be
+recorded.
+
+**list-excel-invoices**
+Accepts several additional optional parameters:
+● `filter_status`` - if left empty, invoices in all statuses are sent. 1 - new invoices. 2 -
+invoices in Review #1. 3 - invoices in Review #2. 4 - invoices in approval. 5 - fully
+approved invoices. 6 - fully rejected invoices.
+●`filter_groupcompany` - if left empty, invoices from all the group companies are sent. If
+Realpad database IDs of group companies are provided (as a comma-separated list),
+then only invoices from these companies are sent.
+● `filter_issued_from`` - specify a date in the 2019-12-31 format to only send invoices
+issues after that date.
+● `filter_issued_to` - specify a date in the 2019-12-31 format to only send invoices issues
+before that date.
+The initial set of columns describes the Invoice itself, and the last set of columns contains the
+data of its Lines.
+
+## Appendix
+
+Unit status enumeration
+● 0 - free.
+● 1 - pre-reserved.
+● 2 - reserved.
+● 3 - sold.
+● 4 - not for sale.
+● 5 - delayed.
+
+Unit type enumeration
+● 1 - flat.
+● 2 - parking.
+● 3 - cellar.
+● 4 - outdoor parking.
+● 5 - garage.
+● 6 - commercial space.
+● 7 - family house.
+● 8 - land.
+● 9 - atelier.
+● 10 - office.
+● 11 - art workshop.
+● 12 - non-residential unit.
+● 13 - motorbike parking.
+● 14 - creative workshop.
+● 15 - townhouse.
+● 16 - utility room.
+● 17 - condominium.
+● 18 - storage.
+● 19 - apartment.
+● 20 - accommodation unit.
+● 21 - bike stand.
+● 22 - communal area.
