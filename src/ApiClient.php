@@ -88,6 +88,7 @@ class ApiClient extends \Ease\Sand
         $this->apiUsername = \Ease\Shared::cfg('REALPAD_USERNAME');
         $this->apiPassword = \Ease\Shared::cfg('REALPAD_PASSWORD');
         $this->curlInit();
+        $this->setObjectName();
     }
 
     /**
