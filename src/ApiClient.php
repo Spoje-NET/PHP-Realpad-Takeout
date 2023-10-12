@@ -229,14 +229,15 @@ class ApiClient extends \Ease\Sand
         $responseCode = $this->doCurlRequest($this->baseEndpoint . 'ws/v10/list-excel-customers', 'POST');
         $customersData = [];
         if ($responseCode == 200) {
-            $xls = sys_get_temp_dir() . '/' . \Ease\Functions::randomString() . '.xls';
+            $xls = sys_get_temp_dir() . '/list-excel-customers_' . \Ease\Functions::randomString() . '.xls';
             file_put_contents($xls, $this->lastCurlResponse);
             $spreadsheet = IOFactory::load($xls);
             unlink($xls);
             $customersDataRaw = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
+            $columns = $customersDataRaw[1];
             unset($customersDataRaw[1]);
             foreach ($customersDataRaw as $recordId => $recordData) {
-                $customersData[$recordId] = array_combine($customersDataRaw[1], $recordData);
+                $customersData[$recordId] = array_combine($columns, $recordData);
             }
         }
         return $customersData;
