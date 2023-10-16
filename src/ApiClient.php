@@ -250,16 +250,18 @@ class ApiClient extends \Ease\Sand
     }
 
     /**
-     * Obtain listing of all Customers
+     * Gives you endpoint's excel data as PHP array
+     *
+     * @param string $endpoint suffix
      *
      * @return array
      */
-    public function listCustomers()
+    public function getExcelData($endpoint)
     {
-        $responseCode = $this->doCurlRequest($this->baseEndpoint . 'ws/v10/list-excel-customers', 'POST');
-        $customersData = [];
+        $responseCode = $this->doCurlRequest($this->baseEndpoint . 'ws/v10/' . $endpoint, 'POST');
+        $excelData = [];
         if ($responseCode == 200) {
-            $xls = sys_get_temp_dir() . '/list-excel-customers_' . \Ease\Functions::randomString() . '.xls';
+            $xls = sys_get_temp_dir() . '/' . $endpoint . '_' . \Ease\Functions::randomString() . '.xls';
             file_put_contents($xls, $this->lastCurlResponse);
             $spreadsheet = IOFactory::load($xls);
             unlink($xls);
@@ -267,9 +269,203 @@ class ApiClient extends \Ease\Sand
             $columns = $customersDataRaw[1];
             unset($customersDataRaw[1]);
             foreach ($customersDataRaw as $recordId => $recordData) {
-                $customersData[$recordId] = array_combine($columns, $recordData);
+                $excelData[$recordId] = array_combine($columns, $recordData);
             }
         }
-        return $customersData;
+        return $excelData;
+    }
+
+    /**
+     * Obtain listing of all Customers
+     *
+     * @return array
+     */
+    public function listCustomers()
+    {
+        return $this->getExcelData('list-excel-customers');
+    }
+
+    /**
+     * The last columns contain the unique unit ID, numeric ID of the unit type,
+     * numeric ID of the unit availability, unique project ID and deal ID from
+     * the Realpad database. See the appendix for the unit type and availability
+     * enums.
+     *
+     * @return array
+     */
+    public function listProducts()
+    {
+        return $this->getExcelData('list-excel-products');
+    }
+
+    /**
+     * The last column contains the unique Deal ID from the Realpad database.
+     *
+     * @return array
+     */
+    public function listBusinessCases()
+    {
+        return $this->getExcelData('list-excel-business-cases');
+    }
+
+    /**
+     * Obtain listing of all Projects
+     *
+     * @return array
+     */
+    public function listProjects()
+    {
+        return $this->getExcelData('list-excel-projects');
+    }
+
+    /**
+     * The last three columns contain the unique document ID, customer ID,
+     * and sales agent ID from the Realpad database. The first column is the
+     * relevant deal ID.
+     *
+     * @return array
+     */
+    public function listDealDocuments()
+    {
+        return $this->getExcelData('list-excel-deal-documents');
+    }
+
+    /**
+     * The last column contains the unique payment ID from the Realpad database.
+     * The second column is the relevant deal ID.
+     *
+     * @return array
+     */
+    public function listPaymentsPrescribed()
+    {
+        return $this->getExcelData('list-excel-payments-prescribed');
+    }
+
+    /**
+     * The first column contains the unique incoming payment ID from the Realpad
+     * database. The second column is the relevant Deal ID.
+     *
+     * @return array
+     */
+    public function listPaymentsIncoming()
+    {
+        return $this->getExcelData('list-excel-payments-incoming');
+    }
+
+    /**
+     * The last columns contain the additional product ID, its type ID, and the
+     * ID of the associated prescribed payment from the Realpad database.
+     * The first column is the relevant deal ID.
+     *
+     * @return array
+     */
+    public function listAdditionalProducts()
+    {
+        return $this->getExcelData('list-excel-additional-products');
+    }
+
+    /**
+     * Among the columns, there are those representing the deal ID and
+     * inspection ID from the Realpad database.
+     *
+     * @return array
+     */
+    public function listInspections()
+    {
+        return $this->getExcelData('list-excel-inspections');
+    }
+
+    /**
+     * Accepts an additional optional parameter mode. By default all the Deal
+     * Warranty Claim Defects are returned. Certain developers will also see the
+     * Communal Areas Defects here by default. If mode is specified, other
+     * Defects can be returned. Available modes are:
+     * DEAL_DEFECTS, DEAL_DEFECTS_COMMUNAL_AREA, DEAL_DEFECTS_COMBINED,
+     * INSPECTION_DEFECTS, INSPECTION_DEFECTS_COMMUNAL_AREA,
+     * INSPECTION_DEFECTS_COMBINED.
+     *
+     * The last column contains the unique defect ID from the Realpad database.
+     * The second column is the relevant deal ID.
+     *
+     * @todo Implement Modes
+     *
+     * @return array
+     */
+    public function listDefects()
+    {
+        return $this->getExcelData('list-excel-defects');
+    }
+
+    /**
+     * The last columns contain the task ID, customer ID, and sales agent ID
+     * from the Realpad database.
+     *
+     * @return array
+     */
+    public function listTasks()
+    {
+        return $this->getExcelData('list-excel-tasks');
+    }
+
+    /**
+     * The last columns contain the event ID, customer ID, unit, and project ID
+     * from the Realpad database.
+     *
+     * @return array
+     */
+    public function listEvents()
+    {
+        return $this->getExcelData('list-excel-events');
+    }
+
+    /**
+     * The last column contains the unit ID from the Realpad database.
+     *
+     * @return array
+     */
+    public function listSalesStatus()
+    {
+        return $this->getExcelData('list-excel-sales-status');
+    }
+
+    /**
+     * Accepts an additional required parameter unitid, which has to be a valid
+     * unit Realpad database ID obtained from some other endpoint.
+     * The first column contains the timestamp of when the given unit started
+     * containing the data on the given row. The second column contains the name
+     * of the user who caused that data to be recorded.
+     *
+     * @return array
+     */
+    public function listUnitHistory()
+    {
+        return $this->getExcelData('list-excel-unit-history');
+    }
+
+    /**
+     * Accepts several additional optional parameters:
+     * ● `filter_status` - if left empty, invoices in all statuses are sent. 1 - new invoices. 2 -
+     * invoices in Review #1. 3 - invoices in Review #2. 4 - invoices in approval. 5 - fully
+     * approved invoices. 6 - fully rejected invoices.
+     *
+     * ● `filter_groupcompany` - if left empty, invoices from all the group companies are sent. If
+     * Realpad database IDs of group companies are provided (as a comma-separated list),
+     * then only invoices from these companies are sent.
+     *
+     * ● `filter_issued_from`` - specify a date in the 2019-12-31 format to only send invoices
+     * issues after that date.
+     *
+     * ● `filter_issued_to` - specify a date in the 2019-12-31 format to only send invoices issues
+     * before that date.
+     * The initial set of columns describes the Invoice itself, and the last set of columns contains the
+     * data of its Lines.
+     *
+     * @todo Implement Filters
+     *
+     * @return array
+     */
+    public function listInvoices()
+    {
+        return $this->getExcelData('list-excel-invoices');
     }
 }
