@@ -16,13 +16,24 @@ Takeout API endpoints. You will perform POST requests over HTTPS and then store 
 resulting data. Most of the Takeout endpoints have just 2 parameters, both required: `login`` and
 `password`.
 
+To configure API client please define this Environment variables first:
+
+```env
+REALPAD_USERNAME=realpad
+REALPAD_PASSWORD=realpad
+```
+
+(Configuration mechanism can also use The PHP constants)
+
 Example call in cURL:
 
-```shell
-curl \
---data "login=...&password=..." \
---output customers.xls \
-https://cms.realpad.eu/ws/v10/list-excel-customers
+```php
+<?php
+\Ease\Shared::init(['REALPAD_USERNAME','REALPAD_PASSWORD'], '../.env');
+
+$client = new \SpojeNet\Realpad\ApiClient();
+$responseCode = $client->doCurlRequest($client->baseEndpoint . 'ws/v10/list-resources', 'POST');
+$dataObtained = $client->lastCurlResponse;
 ```
 
 ### Response
@@ -32,8 +43,8 @@ https://cms.realpad.eu/ws/v10/list-excel-customers
 **list-resources**
 
 ```php
+<?php
 $client = new \SpojeNet\Realpad\ApiClient();
-
 $resources = $client->listResources();
 ```
 
@@ -65,17 +76,17 @@ Array
 </pre>
 
 
-● uid is the unique identifier of this resource, by which it can be retrieved using
+● **uid** is the unique identifier of this resource, by which it can be retrieved using
 get-projects.
 
-● content-type is the MIME type of the file, resolved when uploaded to the system (it’s
+● **content-type** is the MIME type of the file, resolved when uploaded to the system (it’s
 the best guess).
 
-● file-name is the original file name when it was uploaded to the system.
+● **file-name** is the original file name when it was uploaded to the system.
 
-● size is the file size in bytes.
+● **size** is the file size in bytes.
 
-● crc is the CRC32 checksum of the file.
+● **crc** is the CRC32 checksum of the file.
 
 This endpoint will always return all the resources. It’s up to your system to determine which
 ones you haven’t downloaded yet. You may rely on UID as the unique identifier to distinguish
@@ -99,6 +110,25 @@ data in the Excel newer .xlsx format.
 
 **list-excel-customers**
 The last column contains the unique customer ID from the Realpad database.
+
+<pre>
+Array
+(
+    [2] => Array
+        (
+            [Projekt] => Nove Město 3 - C
+            [Datum přidání] => 6/20/2017
+            [Stav] => Postaveno
+            [E-mail] => zakaznik@server.eu
+            [Jméno] => Ukazkovy Zakaznik
+            [Tagy] => 
+            [Zákazník ID] => 4268453
+            [Prodejce ID] => 914756
+            [Stav ID] => 1
+            [Zdroj ID] => 12
+        )
+...
+</pre>
 
 **list-excel-products**
 The last columns contain the unique unit ID, numeric ID of the unit type, numeric ID of the unit
@@ -160,11 +190,11 @@ recorded.
 
 **list-excel-invoices**
 Accepts several additional optional parameters:
-● `filter_status`` - if left empty, invoices in all statuses are sent. 1 - new invoices. 2 -
+● `filter_status` - if left empty, invoices in all statuses are sent. 1 - new invoices. 2 -
 invoices in Review #1. 3 - invoices in Review #2. 4 - invoices in approval. 5 - fully
 approved invoices. 6 - fully rejected invoices.
 
-●`filter_groupcompany` - if left empty, invoices from all the group companies are sent. If
+● `filter_groupcompany` - if left empty, invoices from all the group companies are sent. If
 Realpad database IDs of group companies are provided (as a comma-separated list),
 then only invoices from these companies are sent.
 
