@@ -196,6 +196,7 @@ class ApiClient extends \Ease\Sand
     }
 
     /**
+     * Obtain All resources listing
      *
      * @return array
      */
@@ -214,7 +215,34 @@ class ApiClient extends \Ease\Sand
     }
 
     /**
+     * Obtain Resource by UID
      *
+     * @param string $uid
+     *
+     * @return string|null
+     */
+    public function getResource($uid)
+    {
+        $responseCode = $this->doCurlRequest($this->baseEndpoint . 'resource/' . $uid, 'POST');
+        return $responseCode == 200 ? $this->lastCurlResponse : null;
+    }
+
+    /**
+     * Saver Response
+     *
+     * @param string $uid      Resource UUID
+     * @param string $filename Save
+     *
+     * @return int size of saved file in bites
+     */
+    public function saveResource($uid, $filename)
+    {
+        $resource = $this->getResource($uid);
+        return $this->lastResponseCode == 200 ? file_put_contents($filename, $resource) : 0;
+    }
+
+    /**
+     * Close Curl Handle before serizaliation
      */
     public function __destruct()
     {
@@ -222,6 +250,7 @@ class ApiClient extends \Ease\Sand
     }
 
     /**
+     * Obtain listing of all Customers
      *
      * @return array
      */
