@@ -30,16 +30,40 @@ https://cms.realpad.eu/ws/v10/list-excel-customers
 #### Endpoints with XML payload
 
 **list-resources**
-The root element is `<resources>`, sub-elements look like this:
 
-```xml
-<resource
-uid="bb938c51-891a-48d7-ba86-bea210a55c79"
-content-type="image/jpeg"
-file-name="some file.jpg"
-size="224292"
-crc="3826804066"/>
+```php
+$client = new \SpojeNet\Realpad\ApiClient();
+
+$resources = $client->listResources();
 ```
+
+Example of response:
+
+<pre>
+Array
+(
+    [b19ddfdd-70f1-44cc-8457-190977152325] => Array
+        (
+            [uid] => b19ddfdd-70f1-44cc-8457-190121223233
+            [content-type] => application/pdf
+            [file-name] => SomeFile.pdf
+            [size] => 1679680
+            [checksum] => a78bbad8279871223313232b40d1d32e92060be06ea16bf4eeece8c503b6369b
+            [position] => 0
+        )
+
+    [5e09db8c-b97e-45a3-8872-abe623232d56] => Array
+        (
+            [uid] => 5e09db8c-b97e-45a3-8872-abe60a232123
+            [content-type] => application/xml
+            [file-name] => Bankovni_doklady.xml
+            [size] => 566580
+            [checksum] => 333553a21c200020a20eb3213232132132132114903eb9aa8e4a1ca7030373e8
+            [position] => 1
+        )
+...
+</pre>
+
 
 ● uid is the unique identifier of this resource, by which it can be retrieved using
 get-projects.
