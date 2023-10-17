@@ -29,9 +29,9 @@ Example call in cURL:
 
 ```php
 <?php
-\Ease\Shared::init(['REALPAD_USERNAME','REALPAD_PASSWORD'], '../.env');
 
-$client = new \SpojeNet\Realpad\ApiClient();
+// You can also specifi the credentials in constructor call:
+$client = new \SpojeNet\Realpad\ApiClient('login','password);
 $responseCode = $client->doCurlRequest($client->baseEndpoint . 'ws/v10/list-resources', 'POST');
 $dataObtained = $client->lastCurlResponse;
 ```
@@ -90,14 +90,13 @@ the best guess).
 
 This endpoint will always return all the resources. It’s up to your system to determine which
 ones you haven’t downloaded yet. You may rely on UID as the unique identifier to distinguish
-between the files. You can fetch resources using HTTP GET by retrieving a URL in the following
-form: `<https://cms.realpad.eu/resource/><UID>`
-Example call in cURL:
+between the files. 
 
-```shell
-curl \
---output cached_resource \
-https://cms.realpad.eu/resource/bd5563ae-abc...
+You can fetch resources using HTTP GET by retrieving a URL in the following
+
+```php
+$client = new \SpojeNet\Realpad\ApiClient();
+$resources = $client->getResource(RESOURCE_UID);
 ```
 
 ## Endpoints
@@ -235,6 +234,7 @@ recorded.
 
 **list-excel-invoices**
 Accepts several additional optional parameters:
+
 ● `filter_status` - if left empty, invoices in all statuses are sent. 1 - new invoices. 2 -
 invoices in Review #1. 3 - invoices in Review #2. 4 - invoices in approval. 5 - fully
 approved invoices. 6 - fully rejected invoices.
@@ -250,65 +250,3 @@ issues after that date.
 before that date.
 The initial set of columns describes the Invoice itself, and the last set of columns contains the
 data of its Lines.
-
-## Appendix
-
-Unit status enumeration
-
-● 0 - free.
-
-● 1 - pre-reserved.
-
-● 2 - reserved.
-
-● 3 - sold.
-
-● 4 - not for sale.
-
-● 5 - delayed.
-
-Unit type enumeration
-
-● 1 - flat.
-
-● 2 - parking.
-
-● 3 - cellar.
-
-● 4 - outdoor parking.
-
-● 5 - garage.
-
-● 6 - commercial space.
-
-● 7 - family house.
-
-● 8 - land.
-
-● 9 - atelier.
-
-● 10 - office.
-
-● 11 - art workshop.
-
-● 12 - non-residential unit.
-
-● 13 - motorbike parking.
-
-● 14 - creative workshop.
-
-● 15 - townhouse.
-
-● 16 - utility room.
-
-● 17 - condominium.
-
-● 18 - storage.
-
-● 19 - apartment.
-
-● 20 - accommodation unit.
-
-● 21 - bike stand.
-
-● 22 - communal area.
