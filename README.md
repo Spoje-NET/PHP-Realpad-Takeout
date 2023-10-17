@@ -170,6 +170,51 @@ INSPECTION_DEFECTS_COMMUNAL_AREA, INSPECTION_DEFECTS_COMBINED.
 The last column contains the unique defect ID from the Realpad database. The second column
 is the relevant deal ID.
 
+```php
+$client = new \SpojeNet\Realpad\ApiClient();
+$defects = $client->listDefects('DEAL_DEFECTS');
+print_r($defects);
+```
+
+<pre>
+Array
+(
+    [2] => Array
+        (
+            [Projekt] => Nove Sidliste
+            [Obchodní případ] => 12323234
+            [Typ kontroly] => Technická přejímka
+            [Typ položky technické přejímky] => Podlahy
+            [Jednotka] => TEST TECHNICKÁ PŘEJÍMKA
+            [Zákazník] => REALPAD TEST
+            [Telefon] => 
+            [E-mail] => realpad@test.eu
+            [Číslo vady] => 25456542
+            [Problémová vada] => Ne
+            [Číslo vady dle zákazníka] => 
+            [Popis] => prasklá dlažba
+            [Lokace (např. místnost)] => 
+            [Poslední vyjádření developera] => 
+            [Odesláno zákazníkovi] => 
+            [Poslední vyjádření dodavatele] => 
+            [Přijato dne] => 7/7/2023
+            [Termín pro odstranění vady] => 8/6/2023
+            [Plánovaný termín opravy] => 
+            [Odstraněna dne] => 
+            [Poznámka] => 
+            [Odpovědná osoba] => 
+            [Speciální záruční lhůta] => Ne
+            [Stav] => Přijato do evidence
+            [Část bytu které sa vada týká] => 
+            [Běžný problém] => 
+            [Místnost, které se vada týká] => Koupelna/WC
+            [Dodavatel] => 
+            [Generální dodavatel] => 
+            [Reklamace ID] => 25654654
+        )
+
+</pre>
+
 **list-excel-tasks**
 The last columns contain the task ID, customer ID, and sales agent ID from the Realpad
 database.
@@ -209,6 +254,7 @@ data of its Lines.
 ## Appendix
 
 Unit status enumeration
+
 ● 0 - free.
 
 ● 1 - pre-reserved.
