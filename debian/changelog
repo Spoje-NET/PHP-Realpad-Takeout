@@ -1,0 +1,6 @@
+php-spojenet-realpad-takeout (0.1.0) UNRELEASED; urgency=low
+
+  * Initial release. Closes: #nnnn
+    <nnnn is the bug number of your ITP>
+
+ -- Vítězslav Dvořák <info@vitexsoftware.cz>  Wed, 08 Nov 2023 07:38:51 +0100
