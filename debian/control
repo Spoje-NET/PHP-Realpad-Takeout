@@ -12,7 +12,7 @@ Rules-Requires-Root: no
 Package: php-spojenet-realpad-takeout
 Architecture: any
 Multi-Arch: foreign
-Depends: ${misc:Depends}, ${shlibs:Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends}, composer-debian, php-cli
 Description: Realpad Takeout API Client to back up the data stored in the system.
  Use the Realpad Takeout API to back up the data stored in the system. 
  Both structured data (such as lists of customers, deals, etc) and files uploaded 
