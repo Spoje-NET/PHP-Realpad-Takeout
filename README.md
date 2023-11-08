@@ -16,13 +16,24 @@ Takeout API endpoints. You will perform POST requests over HTTPS and then store 
 resulting data. Most of the Takeout endpoints have just 2 parameters, both required: `login`` and
 `password`.
 
+To configure API client please define this Environment variables first:
+
+```env
+REALPAD_USERNAME=realpad
+REALPAD_PASSWORD=realpad
+```
+
+(Configuration mechanism can also use The PHP constants)
+
 Example call in cURL:
 
-```shell
-curl \
---data "login=...&password=..." \
---output customers.xls \
-https://cms.realpad.eu/ws/v10/list-excel-customers
+```php
+<?php
+
+// You can also specifi the credentials in constructor call:
+$client = new \SpojeNet\Realpad\ApiClient('login','password);
+$responseCode = $client->doCurlRequest($client->baseEndpoint . 'ws/v10/list-resources', 'POST');
+$dataObtained = $client->lastCurlResponse;
 ```
 
 ### Response
@@ -30,39 +41,62 @@ https://cms.realpad.eu/ws/v10/list-excel-customers
 #### Endpoints with XML payload
 
 **list-resources**
-The root element is `<resources>`, sub-elements look like this:
 
-```xml
-<resource
-uid="bb938c51-891a-48d7-ba86-bea210a55c79"
-content-type="image/jpeg"
-file-name="some file.jpg"
-size="224292"
-crc="3826804066"/>
+```php
+<?php
+$client = new \SpojeNet\Realpad\ApiClient();
+$resources = $client->listResources();
 ```
 
-● uid is the unique identifier of this resource, by which it can be retrieved using
+Example of response:
+
+<pre>
+Array
+(
+    [b19ddfdd-70f1-44cc-8457-190977152325] => Array
+        (
+            [uid] => b19ddfdd-70f1-44cc-8457-190121223233
+            [content-type] => application/pdf
+            [file-name] => SomeFile.pdf
+            [size] => 1679680
+            [checksum] => a78bbad8279871223313232b40d1d32e92060be06ea16bf4eeece8c503b6369b
+            [position] => 0
+        )
+
+    [5e09db8c-b97e-45a3-8872-abe623232d56] => Array
+        (
+            [uid] => 5e09db8c-b97e-45a3-8872-abe60a232123
+            [content-type] => application/xml
+            [file-name] => Bankovni_doklady.xml
+            [size] => 566580
+            [checksum] => 333553a21c200020a20eb3213232132132132114903eb9aa8e4a1ca7030373e8
+            [position] => 1
+        )
+...
+</pre>
+
+
+● **uid** is the unique identifier of this resource, by which it can be retrieved using
 get-projects.
 
-● content-type is the MIME type of the file, resolved when uploaded to the system (it’s
+● **content-type** is the MIME type of the file, resolved when uploaded to the system (it’s
 the best guess).
 
-● file-name is the original file name when it was uploaded to the system.
+● **file-name** is the original file name when it was uploaded to the system.
 
-● size is the file size in bytes.
+● **size** is the file size in bytes.
 
-● crc is the CRC32 checksum of the file.
+● **crc** is the CRC32 checksum of the file.
 
 This endpoint will always return all the resources. It’s up to your system to determine which
 ones you haven’t downloaded yet. You may rely on UID as the unique identifier to distinguish
-between the files. You can fetch resources using HTTP GET by retrieving a URL in the following
-form: `<https://cms.realpad.eu/resource/><UID>`
-Example call in cURL:
+between the files. 
 
-```shell
-curl \
---output cached_resource \
-https://cms.realpad.eu/resource/bd5563ae-abc...
+You can fetch resources using HTTP GET by retrieving a URL in the following
+
+```php
+$client = new \SpojeNet\Realpad\ApiClient();
+$resources = $client->getResource(RESOURCE_UID);
 ```
 
 ## Endpoints
@@ -75,6 +109,25 @@ data in the Excel newer .xlsx format.
 
 **list-excel-customers**
 The last column contains the unique customer ID from the Realpad database.
+
+<pre>
+Array
+(
+    [2] => Array
+        (
+            [Projekt] => Nove Město 3 - C
+            [Datum přidání] => 6/20/2017
+            [Stav] => Postaveno
+            [E-mail] => zakaznik@server.eu
+            [Jméno] => Ukazkovy Zakaznik
+            [Tagy] => 
+            [Zákazník ID] => 4268453
+            [Prodejce ID] => 914756
+            [Stav ID] => 1
+            [Zdroj ID] => 12
+        )
+...
+</pre>
 
 **list-excel-products**
 The last columns contain the unique unit ID, numeric ID of the unit type, numeric ID of the unit
@@ -116,6 +169,51 @@ INSPECTION_DEFECTS_COMMUNAL_AREA, INSPECTION_DEFECTS_COMBINED.
 The last column contains the unique defect ID from the Realpad database. The second column
 is the relevant deal ID.
 
+```php
+$client = new \SpojeNet\Realpad\ApiClient();
+$defects = $client->listDefects('DEAL_DEFECTS');
+print_r($defects);
+```
+
+<pre>
+Array
+(
+    [2] => Array
+        (
+            [Projekt] => Nove Sidliste
+            [Obchodní případ] => 12323234
+            [Typ kontroly] => Technická přejímka
+            [Typ položky technické přejímky] => Podlahy
+            [Jednotka] => TEST TECHNICKÁ PŘEJÍMKA
+            [Zákazník] => REALPAD TEST
+            [Telefon] => 
+            [E-mail] => realpad@test.eu
+            [Číslo vady] => 25456542
+            [Problémová vada] => Ne
+            [Číslo vady dle zákazníka] => 
+            [Popis] => prasklá dlažba
+            [Lokace (např. místnost)] => 
+            [Poslední vyjádření developera] => 
+            [Odesláno zákazníkovi] => 
+            [Poslední vyjádření dodavatele] => 
+            [Přijato dne] => 7/7/2023
+            [Termín pro odstranění vady] => 8/6/2023
+            [Plánovaný termín opravy] => 
+            [Odstraněna dne] => 
+            [Poznámka] => 
+            [Odpovědná osoba] => 
+            [Speciální záruční lhůta] => Ne
+            [Stav] => Přijato do evidence
+            [Část bytu které sa vada týká] => 
+            [Běžný problém] => 
+            [Místnost, které se vada týká] => Koupelna/WC
+            [Dodavatel] => 
+            [Generální dodavatel] => 
+            [Reklamace ID] => 25654654
+        )
+
+</pre>
+
 **list-excel-tasks**
 The last columns contain the task ID, customer ID, and sales agent ID from the Realpad
 database.
@@ -136,11 +234,12 @@ recorded.
 
 **list-excel-invoices**
 Accepts several additional optional parameters:
-● `filter_status`` - if left empty, invoices in all statuses are sent. 1 - new invoices. 2 -
+
+● `filter_status` - if left empty, invoices in all statuses are sent. 1 - new invoices. 2 -
 invoices in Review #1. 3 - invoices in Review #2. 4 - invoices in approval. 5 - fully
 approved invoices. 6 - fully rejected invoices.
 
-●`filter_groupcompany` - if left empty, invoices from all the group companies are sent. If
+● `filter_groupcompany` - if left empty, invoices from all the group companies are sent. If
 Realpad database IDs of group companies are provided (as a comma-separated list),
 then only invoices from these companies are sent.
 
@@ -151,64 +250,3 @@ issues after that date.
 before that date.
 The initial set of columns describes the Invoice itself, and the last set of columns contains the
 data of its Lines.
-
-## Appendix
-
-Unit status enumeration
-● 0 - free.
-
-● 1 - pre-reserved.
-
-● 2 - reserved.
-
-● 3 - sold.
-
-● 4 - not for sale.
-
-● 5 - delayed.
-
-Unit type enumeration
-
-● 1 - flat.
-
-● 2 - parking.
-
-● 3 - cellar.
-
-● 4 - outdoor parking.
-
-● 5 - garage.
-
-● 6 - commercial space.
-
-● 7 - family house.
-
-● 8 - land.
-
-● 9 - atelier.
-
-● 10 - office.
-
-● 11 - art workshop.
-
-● 12 - non-residential unit.
-
-● 13 - motorbike parking.
-
-● 14 - creative workshop.
-
-● 15 - townhouse.
-
-● 16 - utility room.
-
-● 17 - condominium.
-
-● 18 - storage.
-
-● 19 - apartment.
-
-● 20 - accommodation unit.
-
-● 21 - bike stand.
-
-● 22 - communal area.
