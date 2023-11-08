@@ -12,7 +12,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "SpojeNet\\Realpad\\": "src/"
+            "SpojeNet\\Realpad\\": "."
         }
     },
     "authors": [
