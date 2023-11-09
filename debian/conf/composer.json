@@ -18,5 +18,8 @@
             "email": "info@vitexsoftware.cz"
         }
     ],
+    "config": {
+        "vendor-dir": "/var/lib/composer/realpad-takeout"
+    },
     "minimum-stability": "dev"
 }
