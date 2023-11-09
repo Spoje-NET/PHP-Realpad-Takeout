@@ -3,6 +3,7 @@ set -e
 
 case "$1" in
     configure)
+       composer install  -d /usr/lib/realpad2mailkit/
        composer-global-update deb/realpad-takeout
     ;;
 
