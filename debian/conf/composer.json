@@ -3,11 +3,8 @@
     "description": "Realpad Takeout API Client",
     "type": "library",
     "require": {
-        "deb/ease-core": "dev-main",
-        "phpoffice/phpspreadsheet": "dev-master"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "10.5.x-dev"
+        "deb/ease-core": "*",
+        "phpoffice/phpspreadsheet": "*"
     },
     "license": "MIT",
     "autoload": {
