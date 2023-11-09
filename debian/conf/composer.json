@@ -18,6 +18,13 @@
             "email": "info@vitexsoftware.cz"
         }
     ],
+    "repositories": [
+        {
+            "type": "path",
+            "url": "/usr/share/php/EaseCore/"
+        }
+    ],
+
     "config": {
         "vendor-dir": "/var/lib/composer/realpad-takeout"
     },
