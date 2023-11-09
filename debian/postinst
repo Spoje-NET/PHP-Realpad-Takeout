@@ -3,7 +3,7 @@ set -e
 
 case "$1" in
     configure)
-        composer-global-update deb/realpad-takeout
+       composer-global-update deb/realpad-takeout
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
