@@ -1,5 +1,7 @@
 # Realpad Takeout API Client for PHP
 
+![Realpad Takeout](realpad-takeout.svg?raw=true)
+
 *for real estate developer IT / reporting departments, integrators, and other 3rd parties*
 
 This document describes how to use the Realpad Takeout API to back up the data stored in the
