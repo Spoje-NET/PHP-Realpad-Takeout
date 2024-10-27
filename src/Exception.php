@@ -1,43 +1,51 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * This file is part of the RealpadTakeout package
+ *
+ * https://github.com/Spoje-NET/PHP-Realpad-Takeout
+ *
+ * (c) Spoje.Net IT s.r.o. <http://spojenenet.cz/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace SpojeNet\Realpad;
 
 /**
- * Description of Exception
+ * Description of Exception.
  *
  * @author vitex
  */
 class Exception extends \Ease\Exception
 {
     /**
-     * Original server response
-     * @var string
+     * Original server response.
      */
-    private $serverResponse = '';
+    private string $serverResponse = '';
 
     /**
-     * Error messages sit here
-     * @var array
+     * Error messages sit here.
      */
-    private $errorMessages = [];
+    private array $errorMessages = [];
 
     /**
-     * RealPad API response as Exception
+     * RealPad API response as Exception.
      *
-     * @param string $message good to know
-     *
-     * @param ApiClient $caller Client Object
-     *
-     * @param \Ease\Exception $previous
+     * @param string    $message good to know
+     * @param ApiClient $caller  Client Object
      */
-    public function __construct($message, ApiClient $caller, \Ease\Exception $previous = null)
+    public function __construct($message, ApiClient $caller, ?\Ease\Exception $previous = null)
     {
         $this->errorMessages = $caller->getErrors();
-        parent::__construct(get_class($caller) . ': ' . $message, $caller->getLastResponseCode(), $previous);
+        parent::__construct(\get_class($caller).': '.$message, $caller->getLastResponseCode(), $previous);
     }
 
     /**
-     * Get (first) error message
+     * Get (first) error message.
      *
      * @param int $index which message
      *
@@ -49,7 +57,7 @@ class Exception extends \Ease\Exception
     }
 
     /**
-     * All stored Error messages
+     * All stored Error messages.
      *
      * @return array
      */

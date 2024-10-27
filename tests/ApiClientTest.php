@@ -1,5 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * This file is part of the RealpadTakeout package
+ *
+ * https://github.com/Spoje-NET/PHP-Realpad-Takeout
+ *
+ * (c) Spoje.Net IT s.r.o. <http://spojenenet.cz/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Test\SpojeNet\Realpad;
 
 use SpojeNet\Realpad\ApiClient;
@@ -9,10 +22,7 @@ use SpojeNet\Realpad\ApiClient;
  */
 class ApiClientTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ApiClient
-     */
-    protected $object;
+    protected ApiClient $object;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -29,29 +39,28 @@ class ApiClientTest extends \PHPUnit\Framework\TestCase
      */
     protected function tearDown(): void
     {
-
     }
 
     /**
-     * @covers SpojeNet\Realpad\ApiClient::curlInit
+     * @covers \SpojeNet\Realpad\ApiClient::curlInit
      */
-    public function testcurlInit()
+    public function testcurlInit(): void
     {
         $this->assertIsObject($this->object->curlInit());
     }
 
     /**
-     * @covers SpojeNet\Realpad\ApiClient::doCurlRequest
+     * @covers \SpojeNet\Realpad\ApiClient::doCurlRequest
      */
-    public function testdoCurlRequest()
+    public function testdoCurlRequest(): void
     {
         $this->assertEquals(200, $this->object->doCurlRequest('https://realpadsoftware.com/cs/'));
     }
 
     /**
-     * @covers SpojeNet\Realpad\ApiClient::xml2array
+     * @covers \SpojeNet\Realpad\ApiClient::xml2array
      */
-    public function testxml2array()
+    public function testxml2array(): void
     {
         $xml = '<note><to>Tove</to><from>Jani</from><heading>Reminder</heading><body>this weekend!</body></note>';
         $array = ['to' => 'Tove', 'from' => 'Jani', 'heading' => 'Reminder', 'body' => 'this weekend!'];
@@ -59,33 +68,33 @@ class ApiClientTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @covers SpojeNet\Realpad\ApiClient::disconnect
+     * @covers \SpojeNet\Realpad\ApiClient::disconnect
      */
-    public function testdisconnect()
+    public function testdisconnect(): void
     {
         $this->assertNull($this->object->disconnect());
     }
 
     /**
-     * @covers SpojeNet\Realpad\ApiClient::listResources
+     * @covers \SpojeNet\Realpad\ApiClient::listResources
      */
-    public function testlistResources()
+    public function testlistResources(): void
     {
         $this->assertIsArray($this->object->listResources());
     }
 
     /**
-     * @covers SpojeNet\Realpad\ApiClient::listCustomers
+     * @covers \SpojeNet\Realpad\ApiClient::listCustomers
      */
-    public function testlistCustomers()
+    public function testlistCustomers(): void
     {
         $this->assertIsArray($this->object->listCustomers());
     }
-    
+
     /**
-     * @covers SpojeNet\Realpad\ApiClient::__destruct
+     * @covers \SpojeNet\Realpad\ApiClient::__destruct
      */
-    public function test__destruct()
+    public function testDestruct(): void
     {
         $this->assertEmpty($this->object->__destruct());
     }

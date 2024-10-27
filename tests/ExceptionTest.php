@@ -1,5 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * This file is part of the RealpadTakeout package
+ *
+ * https://github.com/Spoje-NET/PHP-Realpad-Takeout
+ *
+ * (c) Spoje.Net IT s.r.o. <http://spojenenet.cz/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Test\SpojeNet\Realpad;
 
 use SpojeNet\Realpad\Exception;
@@ -9,10 +22,7 @@ use SpojeNet\Realpad\Exception;
  */
 class ExceptionTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var Exception
-     */
-    protected $object;
+    protected Exception $object;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -31,21 +41,20 @@ class ExceptionTest extends \PHPUnit\Framework\TestCase
      */
     protected function tearDown(): void
     {
-
     }
 
     /**
-     * @covers SpojeNet\Realpad\Exception::getErrorMessage
+     * @covers \SpojeNet\Realpad\Exception::getErrorMessage
      */
-    public function testgetErrorMessage()
+    public function testgetErrorMessage(): void
     {
         $this->assertEquals('', $this->object->getErrorMessage());
     }
 
     /**
-     * @covers SpojeNet\Realpad\Exception::getErrorMessages
+     * @covers \SpojeNet\Realpad\Exception::getErrorMessages
      */
-    public function testgetErrorMessages()
+    public function testgetErrorMessages(): void
     {
         $this->assertEquals('', $this->object->getErrorMessages());
     }

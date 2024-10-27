@@ -1,4 +1,10 @@
-php-spojenet-realpad-takeout (0.1.1) UNRELEASED; urgency=low
+php-spojenet-realpad-takeout (0.2.0) UNRELEASED; urgency=medium
+
+  * Modernized
+
+ -- vitex <info@vitexsoftware.cz>  Sun, 27 Oct 2024 15:56:24 +0100
+
+php-spojenet-realpad-takeout (0.1.1) unstable; urgency=low
 
   [ Vítězslav Dvořák ]
   * Initial release. Closes: #nnnn
@@ -7,4 +13,4 @@ php-spojenet-realpad-takeout (0.1.1) UNRELEASED; urgency=low
   [ vitex ]
   * final build
 
- -- vitex <info@vitexsoftware.cz>  Thu, 09 Nov 2023 08:39:12 +0100
+ -- vitex <info@vitexsoftware.cz>  Sun, 27 Oct 2024 15:56:14 +0100
