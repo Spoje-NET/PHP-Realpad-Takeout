@@ -42,7 +42,7 @@ class ApiClient extends \Ease\Sand
     public bool $throwException = true;
 
     /**
-     * @var array Unit status enumeration
+     * @var array<int, string> Unit status enumeration
      */
     public array $unitStatus = [
         0 => 'free',
@@ -54,7 +54,7 @@ class ApiClient extends \Ease\Sand
     ];
 
     /**
-     * @var array Unit type enumeration
+     * @var array<int, string> Unit type enumeration
      */
     public array $unitType = [
         1 => 'flat',
@@ -95,6 +95,8 @@ class ApiClient extends \Ease\Sand
 
     /**
      * Last CURL response info.
+     *
+     * @var array<string>
      */
     private array $curlInfo = [];
 
@@ -125,14 +127,8 @@ class ApiClient extends \Ease\Sand
 
     /**
      * RealPad Data obtainer.
-     *
-     * @var string - leave empty to use Environment or constant REALPAD_USERNAME
-     * @var string - leave empty to use Environment or constant REALPAD_PASSWORD
-     *
-     * @param mixed $username
-     * @param mixed $password
      */
-    public function __construct($username = '', $password = '')
+    public function __construct(string $username = '', string $password = '')
     {
         $this->apiUsername = \strlen($username) ? $username : \Ease\Shared::cfg('REALPAD_USERNAME');
         $this->apiPassword = \strlen($password) ? $password : \Ease\Shared::cfg('REALPAD_PASSWORD');
@@ -146,6 +142,11 @@ class ApiClient extends \Ease\Sand
     public function __destruct()
     {
         $this->disconnect();
+    }
+
+    public function getLastResponse(): string
+    {
+        return $this->lastCurlResponse;
     }
 
     /**
@@ -206,7 +207,7 @@ class ApiClient extends \Ease\Sand
         $this->lastCurlResponse = curl_exec($this->curl);
         $this->curlInfo = curl_getinfo($this->curl);
         $this->curlInfo['when'] = microtime();
-        $this->lastResponseCode = $this->curlInfo['http_code'];
+        $this->lastResponseCode = (int) $this->curlInfo['http_code'];
         $this->lastCurlError = curl_error($this->curl);
 
         if (\strlen($this->lastCurlError)) {
@@ -224,14 +225,14 @@ class ApiClient extends \Ease\Sand
     /**
      * Curl Error getter.
      *
-     * @return string
+     * @return array<string>
      */
     public function getErrors()
     {
-        return $this->lastCurlError;
+        return [$this->lastCurlError];
     }
 
-    public function getLastResponseCode()
+    public function getLastResponseCode(): int
     {
         return $this->lastResponseCode;
     }
@@ -307,7 +308,7 @@ class ApiClient extends \Ease\Sand
      *
      * @return int size of saved file in bites
      */
-    public function saveResource($uid, $filename)
+    public function saveResource($uid, string $filename): int
     {
         $resource = $this->getResource($uid);
 
@@ -319,10 +320,8 @@ class ApiClient extends \Ease\Sand
      *
      * @param string $endpoint suffix
      * @param mixed  $params
-     *
-     * @return array
      */
-    public function getExcelData($endpoint, $params = [])
+    public function getExcelData($endpoint, $params = []): array
     {
         $responseCode = $this->doCurlRequest($this->baseEndpoint.'ws/v10/'.$endpoint, 'POST', $params);
         $excelData = [];
@@ -346,10 +345,8 @@ class ApiClient extends \Ease\Sand
 
     /**
      * Obtain listing of all Customers.
-     *
-     * @return array
      */
-    public function listCustomers()
+    public function listCustomers(): array
     {
         return $this->getExcelData('list-excel-customers');
     }
@@ -359,10 +356,8 @@ class ApiClient extends \Ease\Sand
      * numeric ID of the unit availability, unique project ID and deal ID from
      * the Realpad database. See the appendix for the unit type and availability
      * enums.
-     *
-     * @return array
      */
-    public function listProducts()
+    public function listProducts(): array
     {
         return $this->getExcelData('list-excel-products');
     }
@@ -370,9 +365,9 @@ class ApiClient extends \Ease\Sand
     /**
      * The last column contains the unique Deal ID from the Realpad database.
      *
-     * @return array
+     * @return array<int, string>
      */
-    public function listBusinessCases()
+    public function listBusinessCases(): array
     {
         return $this->getExcelData('list-excel-business-cases');
     }
@@ -380,9 +375,9 @@ class ApiClient extends \Ease\Sand
     /**
      * Obtain listing of all Projects.
      *
-     * @return array
+     * @return array<int, string>
      */
-    public function listProjects()
+    public function listProjects(): array
     {
         return $this->getExcelData('list-excel-projects');
     }
@@ -392,9 +387,9 @@ class ApiClient extends \Ease\Sand
      * and sales agent ID from the Realpad database. The first column is the
      * relevant deal ID.
      *
-     * @return array
+     * @return array<int, string>
      */
-    public function listDealDocuments()
+    public function listDealDocuments(): array
     {
         return $this->getExcelData('list-excel-deal-documents');
     }
@@ -402,10 +397,8 @@ class ApiClient extends \Ease\Sand
     /**
      * The last column contains the unique payment ID from the Realpad database.
      * The second column is the relevant deal ID.
-     *
-     * @return array
      */
-    public function listPaymentsPrescribed()
+    public function listPaymentsPrescribed(): array
     {
         return $this->getExcelData('list-excel-payments-prescribed');
     }
@@ -413,10 +406,8 @@ class ApiClient extends \Ease\Sand
     /**
      * The first column contains the unique incoming payment ID from the Realpad
      * database. The second column is the relevant Deal ID.
-     *
-     * @return array
      */
-    public function listPaymentsIncoming()
+    public function listPaymentsIncoming(): array
     {
         return $this->getExcelData('list-excel-payments-incoming');
     }
@@ -425,10 +416,8 @@ class ApiClient extends \Ease\Sand
      * The last columns contain the additional product ID, its type ID, and the
      * ID of the associated prescribed payment from the Realpad database.
      * The first column is the relevant deal ID.
-     *
-     * @return array
      */
-    public function listAdditionalProducts()
+    public function listAdditionalProducts(): array
     {
         return $this->getExcelData('list-excel-additional-products');
     }
@@ -436,10 +425,8 @@ class ApiClient extends \Ease\Sand
     /**
      * Among the columns, there are those representing the deal ID and
      * inspection ID from the Realpad database.
-     *
-     * @return array
      */
-    public function listInspections()
+    public function listInspections(): array
     {
         return $this->getExcelData('list-excel-inspections');
     }
@@ -455,18 +442,16 @@ class ApiClient extends \Ease\Sand
      *
      * @todo Implement Modes
      *
-     * @var string mode none or one from: DEAL_DEFECTS,
-     *             DEAL_DEFECTS_COMMUNAL_AREA,
-     *             DEAL_DEFECTS_COMBINED,
-     *             INSPECTION_DEFECTS,
-     *             INSPECTION_DEFECTS_COMMUNAL_AREA,
-     *             INSPECTION_DEFECTS_COMBINED
+     * @param string $mode none or one from: DEAL_DEFECTS,
+     *               DEAL_DEFECTS_COMMUNAL_AREA,
+     *               DEAL_DEFECTS_COMBINED,
+     *               INSPECTION_DEFECTS,
+     *               INSPECTION_DEFECTS_COMMUNAL_AREA,
+     *               INSPECTION_DEFECTS_COMBINED
      *
-     * @param mixed $mode
-     *
-     * @return array
+     * @return array<int, string>
      */
-    public function listDefects($mode = '')
+    public function listDefects(string $mode = ''): array
     {
         $modesAvailble = [
             'DEAL_DEFECTS',
@@ -478,7 +463,7 @@ class ApiClient extends \Ease\Sand
         ];
 
         if (\strlen($mode) && (array_search($mode, $modesAvailble, true) === false)) {
-            throw new \SpojeNet\Realpad\Exception('Iillegal inspection Mode '.$mode);
+            throw new \SpojeNet\Realpad\Exception('Iillegal inspection Mode '.$mode, $this);
         }
 
         return $this->getExcelData('list-excel-defects', ['mode' => $mode]);
@@ -488,7 +473,7 @@ class ApiClient extends \Ease\Sand
      * The last columns contain the task ID, customer ID, and sales agent ID
      * from the Realpad database.
      *
-     * @return array
+     * @return array<string, string>
      */
     public function listTasks()
     {
@@ -499,7 +484,7 @@ class ApiClient extends \Ease\Sand
      * The last columns contain the event ID, customer ID, unit, and project ID
      * from the Realpad database.
      *
-     * @return array
+     * @return array<string, string>
      */
     public function listEvents()
     {
@@ -509,7 +494,7 @@ class ApiClient extends \Ease\Sand
     /**
      * The last column contains the unit ID from the Realpad database.
      *
-     * @return array
+     * @return array<string, string>
      */
     public function listSalesStatus()
     {
@@ -521,12 +506,12 @@ class ApiClient extends \Ease\Sand
      * containing the data on the given row. The second column contains the name
      * of the user who caused that data to be recorded.
      *
-     * @var int required parameter unitid, which has to be a valid unit
+     * @param int $unitID required parameter unitid, which has to be a valid unit
      *          Realpad database ID obtained from some other endpoint
      *
-     * @return array
+     * @return array<string, string>
      */
-    public function listUnitHistory(int $unitID)
+    public function listUnitHistory(int $unitID): array
     {
         return $this->getExcelData('list-excel-unit-history', ['unitid' => $unitID]);
     }
@@ -535,24 +520,25 @@ class ApiClient extends \Ease\Sand
      * Listing of Invoices. The initial set of columns describes the Invoice
      * itself, and the last set of columns contains the data of its Lines.
      *
-     * @var array ● `filter_status` - if left empty, invoices in all statuses are sent. 1 - new invoices. 2 -
+     * @param array<string, string> $options
+     * ● `filter_status` - if left empty, invoices in all statuses are sent. 1 - new invoices. 2 -
      *            invoices in Review #1. 3 - invoices in Review #2. 4 - invoices in approval. 5 - fully
      *            approved invoices. 6 - fully rejected invoices.
      *
-     *                      ● `filter_groupcompany` - if left empty, invoices from all the group companies are sent. If
+     * ● `filter_groupcompany` - if left empty, invoices from all the group companies are sent. If
      *                                          Realpad database IDs of group companies are provided (as a comma-separated list),
      *                                          then only invoices from these companies are sent.
      *
-     *                      ● `filter_issued_from` - specify a date in the 2019-12-31 format to only send invoices
+     * ● `filter_issued_from` - specify a date in the 2019-12-31 format to only send invoices
      *                                          issues after that date.
      *
-     *                      ● `filter_issued_to` - specify a date in the 2019-12-31 format to only send invoices issues before that date.
+     * ● `filter_issued_to` - specify a date in the 2019-12-31 format to only send invoices issues before that date.
      *
-     * @param mixed $options
+     * @throws \SpojeNet\Realpad\Exception
      *
-     * @return array
+     * @return array<string, string>
      */
-    public function listInvoices($options = [])
+    public function listInvoices(array $options = []): array
     {
         $colsAvailble = [
             'filter_status',
@@ -563,7 +549,7 @@ class ApiClient extends \Ease\Sand
 
         foreach ($options as $key => $value) {
             if (array_search($key, $colsAvailble, true) === false) {
-                throw new \SpojeNet\Realpad\Exception('Iillegal Invoice option '.$key);
+                throw new \SpojeNet\Realpad\Exception('Iillegal Invoice option '.$key, $this);
             }
         }
 

@@ -29,6 +29,8 @@ class Exception extends \Ease\Exception
 
     /**
      * Error messages sit here.
+     *
+     * @var array<string>
      */
     private array $errorMessages = [];
 
@@ -41,7 +43,19 @@ class Exception extends \Ease\Exception
     public function __construct($message, ApiClient $caller, ?\Ease\Exception $previous = null)
     {
         $this->errorMessages = $caller->getErrors();
+        $serverResponse = $caller->getLastResponse();
+
         parent::__construct(\get_class($caller).': '.$message, $caller->getLastResponseCode(), $previous);
+    }
+
+    /**
+     * Get original server response.
+     *
+     * @return string
+     */
+    public function getServerResponse()
+    {
+        return $this->serverResponse;
     }
 
     /**
@@ -59,7 +73,7 @@ class Exception extends \Ease\Exception
     /**
      * All stored Error messages.
      *
-     * @return array
+     * @return array<string>
      */
     public function getErrorMessages()
     {
