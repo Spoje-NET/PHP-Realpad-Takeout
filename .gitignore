@@ -12,3 +12,9 @@ composer.phar
 /src/.php-cs-fixer.cache
 /.phpunit.cache/
 /.build/
+/debian/php-spojenet-realpad-takeout/
+/debian/.debhelper/
+/debian/debhelper-build-stamp
+/debian/files
+/debian/php-spojenet-realpad-takeout.debhelper.log
+/debian/php-spojenet-realpad-takeout.substvars

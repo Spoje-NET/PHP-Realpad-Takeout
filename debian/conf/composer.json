@@ -1,32 +1,32 @@
 {
-    "name": "deb/realpad-takeout",
-    "description": "Realpad Takeout API Client",
-    "type": "library",
-    "require": {
-        "deb/ease-core": "*",
-        "phpoffice/phpspreadsheet": "*"
-    },
-    "license": "MIT",
-    "autoload": {
-        "psr-4": {
-            "SpojeNet\\Realpad\\": "."
-        }
-    },
-    "authors": [
-        {
-            "name": "Vítězslav Dvořák",
-            "email": "info@vitexsoftware.cz"
-        }
-    ],
-    "repositories": [
-        {
-            "type": "path",
-            "url": "/usr/share/php/EaseCore/"
-        }
-    ],
-
-    "config": {
-        "vendor-dir": "/var/lib/composer/realpad-takeout"
-    },
-    "minimum-stability": "dev"
+  "name": "deb/realpad-takeout",
+  "description": "Realpad Takeout API Client",
+  "type": "library",
+  "require": {
+    "deb/ease-core": "*",
+    "phpoffice/phpspreadsheet": "*"
+  },
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "SpojeNet\\Realpad\\": "."
+    }
+  },
+  "authors": [
+    {
+      "name": "Vítězslav Dvořák",
+      "email": "info@vitexsoftware.cz"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "path",
+      "url": "/usr/share/php/EaseCore/"
+    }
+  ],
+  "config": {
+    "vendor-dir": "/var/lib/composer/realpad-takeout"
+  },
+  "minimum-stability": "dev",
+  "version": "1.0.0"
 }
