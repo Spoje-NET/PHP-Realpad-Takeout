@@ -443,11 +443,11 @@ class ApiClient extends \Ease\Sand
      * @todo Implement Modes
      *
      * @param string $mode none or one from: DEAL_DEFECTS,
-     *               DEAL_DEFECTS_COMMUNAL_AREA,
-     *               DEAL_DEFECTS_COMBINED,
-     *               INSPECTION_DEFECTS,
-     *               INSPECTION_DEFECTS_COMMUNAL_AREA,
-     *               INSPECTION_DEFECTS_COMBINED
+     *                     DEAL_DEFECTS_COMMUNAL_AREA,
+     *                     DEAL_DEFECTS_COMBINED,
+     *                     INSPECTION_DEFECTS,
+     *                     INSPECTION_DEFECTS_COMMUNAL_AREA,
+     *                     INSPECTION_DEFECTS_COMBINED
      *
      * @return array<int, string>
      */
@@ -507,7 +507,7 @@ class ApiClient extends \Ease\Sand
      * of the user who caused that data to be recorded.
      *
      * @param int $unitID required parameter unitid, which has to be a valid unit
-     *          Realpad database ID obtained from some other endpoint
+     *                    Realpad database ID obtained from some other endpoint
      *
      * @return array<string, string>
      */
@@ -521,9 +521,9 @@ class ApiClient extends \Ease\Sand
      * itself, and the last set of columns contains the data of its Lines.
      *
      * @param array<string, string> $options
-     * ● `filter_status` - if left empty, invoices in all statuses are sent. 1 - new invoices. 2 -
-     *            invoices in Review #1. 3 - invoices in Review #2. 4 - invoices in approval. 5 - fully
-     *            approved invoices. 6 - fully rejected invoices.
+     *                                       ● `filter_status` - if left empty, invoices in all statuses are sent. 1 - new invoices. 2 -
+     *                                       invoices in Review #1. 3 - invoices in Review #2. 4 - invoices in approval. 5 - fully
+     *                                       approved invoices. 6 - fully rejected invoices.
      *
      * ● `filter_groupcompany` - if left empty, invoices from all the group companies are sent. If
      *                                          Realpad database IDs of group companies are provided (as a comma-separated list),
