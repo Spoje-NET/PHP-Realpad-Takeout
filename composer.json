@@ -3,7 +3,7 @@
     "description": "Realpad Takeout API Client",
     "type": "library",
     "require": {
-        "vitexsoftware/ease-core": "^1.45",
+        "vitexsoftware/ease-core": "^1.49",
         "phpoffice/phpspreadsheet": "^5.0"
     },
     "license": "MIT",
