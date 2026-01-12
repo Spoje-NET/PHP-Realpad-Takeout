@@ -4,7 +4,7 @@
     "type": "library",
     "require": {
         "vitexsoftware/ease-core": "^1.49",
-        "phpoffice/phpspreadsheet": "^5.3"
+        "phpoffice/phpspreadsheet": "^5.4"
     },
     "license": "MIT",
     "autoload": {
