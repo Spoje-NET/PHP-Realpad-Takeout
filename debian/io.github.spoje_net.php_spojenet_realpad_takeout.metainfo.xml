@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.spoje_net.php_spojenet_realpad_takeout</id>
+  <metadata_license>MIT</metadata_license>
+  <project_license>MIT</project_license>
+  <name>php-spojenet-realpad-takeout</name>
+  <summary>Realpad Takeout API Client to back up the data stored in the system.</summary>
+  <description>
+    <p>
+      Use the Realpad Takeout API to back up the data stored in the system. Both structured data (such as lists of customers, deals, etc) and files uploaded to the CRM (unit plans, contract scans, ...) can be automatically retrieved this way.
+    </p>
+  </description>
+  <categories>
+    <category>Utility</category>
+  </categories>
+  <url type="homepage">https://github.com/Spoje-NET/PHP-Realpad-Takeout</url>
+  <url type="bugtracker">https://github.com/Spoje-NET/PHP-Realpad-Takeout/issues</url>
+  <developer id="io.github.spoje_net">
+    <name>Spoje.Net</name>
+  </developer>
+  <content_rating type="oars-1.1"/>
+</component>
