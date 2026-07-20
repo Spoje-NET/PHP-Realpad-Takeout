@@ -1,3 +1,2 @@
 src/*				usr/share/php/RealpadTakeout/
-debian/conf/composer.json	usr/share/php/RealpadTakeout/
-
+debian/php-spojenet-realpad-takeout.metainfo.xml	usr/share/metainfo/

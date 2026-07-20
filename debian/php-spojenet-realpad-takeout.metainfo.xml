@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component type="desktop-application">
+<component type="generic">
   <id>io.github.spoje_net.php_spojenet_realpad_takeout</id>
   <metadata_license>MIT</metadata_license>
   <project_license>MIT</project_license>
@@ -10,6 +10,7 @@
       Use the Realpad Takeout API to back up the data stored in the system. Both structured data (such as lists of customers, deals, etc) and files uploaded to the CRM (unit plans, contract scans, ...) can be automatically retrieved this way.
     </p>
   </description>
+  <icon type="stock">package-x-generic</icon>
   <categories>
     <category>Utility</category>
   </categories>

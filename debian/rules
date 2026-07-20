@@ -5,11 +5,17 @@
 #export DEB_CFLAGS_MAINT_APPEND  = -Wall -pedantic
 #export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
 
+PKG_VERSION := $(shell dpkg-parsechangelog -S Version | sed 's/~.*//')
+PKG_SOURCE  := $(shell jq -r '.name' composer.json)
+PKG_TYPE    := $(shell jq -r '.type' composer.json)
+
 %:
 	dh $@
 
 
 override_dh_install:
-	jq '.version = "'`dpkg-parsechangelog | sed -n 's/^Version: //p'| sed 's/~.*//'`'"'  debian/conf/composer.json |sponge debian/conf/composer.json
 	dh_install
-
+	install -m 644 debian/autoload.php debian/php-spojenet-realpad-takeout/usr/share/php/RealpadTakeout/autoload.php
+	sed -i "s|'unknown'|'$(PKG_SOURCE)'|" debian/php-spojenet-realpad-takeout/usr/share/php/RealpadTakeout/autoload.php
+	sed -i "s|'0.0.0'|'$(PKG_VERSION)'|" debian/php-spojenet-realpad-takeout/usr/share/php/RealpadTakeout/autoload.php
+	sed -i "s|'library'|'$(PKG_TYPE)'|g" debian/php-spojenet-realpad-takeout/usr/share/php/RealpadTakeout/autoload.php
