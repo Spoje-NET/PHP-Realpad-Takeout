@@ -1,6 +1,8 @@
 # Realpad Takeout API Client for PHP
 
 ![Realpad Takeout](realpad-takeout.svg?raw=true)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+![Packaging: deb](https://img.shields.io/badge/packaging-.deb-red?logo=debian&logoColor=white)
 
 *for real estate developer IT / reporting departments, integrators, and other 3rd parties*
 
