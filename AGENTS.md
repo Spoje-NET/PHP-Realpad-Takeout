@@ -1,4 +1,4 @@
-# WARP.md - Working AI Reference for PHP-Realpad-Takeout
+# AGENTS.md - Working AI Reference for PHP-Realpad-Takeout
 
 ## Project Overview
 **Type**: PHP Project/Debian Package
